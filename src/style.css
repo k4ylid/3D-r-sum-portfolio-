@@ -1,0 +1,94 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; background: #0b0a09; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #e8dcc8; }
+canvas { display: block; }
+
+#hud { position: fixed; inset: 0; pointer-events: none; }
+
+#crosshair {
+  position: absolute; left: 50%; top: 50%; width: 6px; height: 6px;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  background: rgba(232, 220, 200, 0.85); box-shadow: 0 0 6px rgba(0,0,0,0.7);
+}
+
+#room-name {
+  position: absolute; top: 58px; width: 100%; text-align: center;
+  font-size: 30px; letter-spacing: 3px; color: #efe3cb;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.9); opacity: 0.92;
+}
+#room-name.flash { animation: roomflash 2.6s ease-out; }
+@keyframes roomflash { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 0.95; transform: none; } 80% { opacity: 0.95; } 100% { opacity: 0.92; } }
+
+#prompt {
+  position: absolute; left: 50%; top: 58%; transform: translateX(-50%);
+  font-size: 15px; letter-spacing: 1px; color: #f5e7cf;
+  background: rgba(12, 10, 8, 0.72); border: 1px solid rgba(179, 145, 85, 0.55);
+  padding: 7px 14px; border-radius: 3px; opacity: 0; transition: opacity 0.18s;
+  white-space: nowrap;
+}
+
+#hint {
+  position: absolute; bottom: 18px; width: 100%; text-align: center;
+  font-size: 13px; letter-spacing: 1px; color: rgba(232, 220, 200, 0.62);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8); transition: opacity .3s;
+}
+
+#topbar {
+  position: absolute; top: 0; left: 0; right: 0; padding: 12px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; letter-spacing: 2px; color: rgba(232,220,200,0.75);
+}
+#quality {
+  pointer-events: auto; background: rgba(12,10,8,0.7); color: #e8dcc8;
+  border: 1px solid rgba(179,145,85,0.5); font-family: inherit;
+  padding: 4px 8px; border-radius: 3px; font-size: 12px;
+}
+
+#intro, #card {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(8, 7, 6, 0.78); backdrop-filter: blur(6px);
+  transition: opacity 0.45s; z-index: 10;
+}
+#intro.hidden { opacity: 0; pointer-events: none; }
+#card { opacity: 0; pointer-events: none; }
+#card.open { opacity: 1; pointer-events: auto; }
+
+.panel {
+  max-width: 560px; width: calc(100% - 48px); padding: 40px 44px;
+  background: linear-gradient(160deg, #171310, #0f0d0b);
+  border: 1px solid rgba(179, 145, 85, 0.4); border-radius: 4px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+}
+.panel h1 { font-size: 52px; letter-spacing: 10px; color: #efe3cb; font-weight: 700; }
+.panel h2 { font-size: 34px; letter-spacing: 2px; color: #efe3cb; }
+.panel .tag { font-size: 15px; font-style: italic; color: #b39155; margin: 10px 0 18px; letter-spacing: 1px; }
+.panel .desc { font-size: 15px; line-height: 1.7; color: #cfc3ab; }
+.panel .small { font-size: 12px; color: #7a7264; margin-top: 18px; letter-spacing: 1px; }
+
+#enter {
+  margin-top: 26px; font-family: inherit; font-size: 16px; letter-spacing: 3px;
+  padding: 13px 34px; background: #b39155; color: #14100c; border: none;
+  border-radius: 3px; cursor: pointer; transition: background .2s, transform .15s;
+}
+#enter:hover { background: #d4af6e; transform: translateY(-1px); }
+
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; }
+#c-year { color: #7a7264; font-size: 14px; letter-spacing: 1px; white-space: nowrap; }
+#c-chips { margin: 18px 0 4px; display: flex; flex-wrap: wrap; gap: 8px; }
+#c-chips span {
+  font-size: 12px; letter-spacing: 1px; padding: 4px 10px;
+  border: 1px solid rgba(179,145,85,0.45); border-radius: 20px; color: #d9c79e;
+}
+.card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+#c-link {
+  color: #14100c; background: #b39155; text-decoration: none; font-size: 14px;
+  padding: 9px 20px; border-radius: 3px; letter-spacing: 1px; transition: background .2s;
+}
+#c-link:hover { background: #d4af6e; }
+.card-foot .small { margin-top: 0; }
+
+@media (max-width: 640px) {
+  .panel { padding: 28px 24px; }
+  .panel h1 { font-size: 36px; letter-spacing: 6px; }
+  #room-name { font-size: 20px; top: 46px; }
+}
