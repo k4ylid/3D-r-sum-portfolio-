@@ -108,10 +108,34 @@ const ui = new UI({
   onEnter: () => {
     if (!isTouch) player.requestLock();
   },
-  onQuality: applyQuality,
+  onQuality: (q) => {
+    tier = q;
+    applyQuality(q);
+  },
 });
 applyQuality(isTouch ? 'low' : 'medium');
 if (isTouch) ui.setPrompt(null);
+
+// auto-degrade: if the first seconds run slow (software GL, weak GPU),
+// drop a tier so the visit stays walkable
+let tier: Quality = isTouch ? 'low' : 'medium';
+let fpsWindowStart = performance.now();
+let fpsFrames = 0;
+let autoSettled = false;
+function autoQuality() {
+  if (autoSettled) return;
+  fpsFrames++;
+  const elapsed = performance.now() - fpsWindowStart;
+  if (elapsed < 4000) return;
+  autoSettled = true;
+  const fps = (fpsFrames / elapsed) * 1000;
+  if (fps < 25 && tier !== 'low') {
+    tier = tier === 'high' ? 'medium' : 'low';
+    applyQuality(tier);
+    const sel = document.getElementById('quality') as HTMLSelectElement | null;
+    if (sel) sel.value = tier;
+  }
+}
 
 // keep hint legible but dim after entering
 ui.onCardClosed = () => {
@@ -174,6 +198,7 @@ addEventListener('resize', () => {
 (window as unknown as Record<string, unknown>).__dbg = {
   player,
   world,
+  renderer,
   teleport(x: number, z: number, yaw: number) {
     player.pos.set(x, 1.62, z);
     player.targetYaw = yaw;
@@ -204,6 +229,7 @@ function tick() {
 
   composer.render();
   frames++;
+  autoQuality();
   requestAnimationFrame(tick);
 }
 tick();
